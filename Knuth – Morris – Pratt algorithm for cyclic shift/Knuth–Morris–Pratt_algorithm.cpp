@@ -101,6 +101,7 @@ bool check(const string& str1, const string& str2) {
 }
 
 void Tests() {
+    ASSERT(check("", ""));
     ASSERT(check("a", "a"));
     ASSERT(check("ab", "ba"));
     ASSERT(check("abc", "cab"));
@@ -127,10 +128,45 @@ void Tests() {
     ASSERT(!check("seegeweg", "xdisduft"));
 }
 
+void TestSpeed() {
+    {
+        LOG_DURATION("Worst case false");
+        string s1(1000000, 'A');
+        string s2(1000000, 'A');
+        s2[999999] = 'B';
+        ASSERT(!check(s1, s2));
+    }
+    {
+        LOG_DURATION("Worst case false reverse");
+        string s1(1000000, 'A');
+        string s2(1000000, 'A');
+        s2[999999] = 'B';
+        ASSERT(!check(s2, s1));
+    }
+    {
+        LOG_DURATION("Worst case true");
+        string s1(1000000, 'A');
+        string s2(1000000, 'A');
+        s2[999999] = 'B';
+        s1[0] = 'B';
+        ASSERT(check(s1, s2));
+    }
+    {
+        LOG_DURATION("Worst case true reverse");
+        string s1(1000000, 'A');
+        string s2(1000000, 'A');
+        s2[999999] = 'B';
+        s1[0] = 'B';
+        ASSERT(check(s2, s1));
+    }
+}
+
 int main()
 {
     TestRunner tr;
     RUN_TEST(tr,Tests);
+
+    RUN_TEST(tr,TestSpeed);
    
     string str1, str2;
     cout << "Enter first string" << endl;
